@@ -11,3 +11,10 @@ export const getAvatarPlaceholder = (user: any) =>
 };
 
 export const getUrlFromQuery = (pathname: string, query: any) => pathname + `?${new URLSearchParams(query).toString()}`;
+
+export const parseKey = (obj: any, key: string) =>
+{
+	const keys = key.split('.');
+	if (keys.length === 1) return obj[keys[0]];
+	return keys.reduce((o, k) => o && o[k], obj);
+};
