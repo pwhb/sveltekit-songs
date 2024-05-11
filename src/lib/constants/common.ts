@@ -16,3 +16,10 @@ export enum FormType
     FILE = "file",
     IMAGE = "image",
 }
+
+export enum DocumentMode
+{
+    View,
+    Create,
+    Edit
+}

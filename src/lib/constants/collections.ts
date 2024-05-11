@@ -3,6 +3,7 @@ const COLLECTIONS = {
     OPTIONS: "options",
     FORMS: "forms",
     CONFIGS: "configs",
+    MENUS: "menus",
 };
 
 export default COLLECTIONS;
