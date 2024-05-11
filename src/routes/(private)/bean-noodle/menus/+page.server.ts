@@ -1,15 +1,15 @@
-import { emptyOption } from '$lib/consts/common';
+import { emptyOption } from '$lib/constants/common';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, fetch, params, url }) =>
 {
     const slug = 'menus';
-    const res = await fetch(`/api/${slug}${url.search ? url.search + "&" : "?"}sort_by=name`);
+    const res = await fetch(`${API_PATH}/${slug}${url.search ? url.search + "&" : "?"}sort_by=name`);
     const data = await res.json();
 
     const parent = [emptyOption, ...data.data.filter((doc: any) => (!doc.parent)).map((doc: any) => ({ label: doc.name, value: doc._id, }))];
 
-    const colRes = await fetch(`/api/collections`);
+    const colRes = await fetch(`${API_PATH}/collections`);
     const colData = await colRes.json();
 
 

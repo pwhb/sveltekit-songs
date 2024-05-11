@@ -1,5 +1,3 @@
-import { string } from "zod";
-
 export function makeTree(all: any[], childrenKeyName = "children", parentKeyName = "parentId")
 {
     const tree: any = {};
@@ -7,7 +5,6 @@ export function makeTree(all: any[], childrenKeyName = "children", parentKeyName
     {
         const docId = document._id.toString();
         const parentId = document[parentKeyName] && document[parentKeyName].toString();
-        // document.selected = selected.length ? selected.includes(docId) : false;
         if (!tree[docId])
         {
             tree[docId] = { ...document, [childrenKeyName]: [] };

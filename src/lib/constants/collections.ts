@@ -4,6 +4,8 @@ const COLLECTIONS = {
     FORMS: "forms",
     CONFIGS: "configs",
     MENUS: "menus",
+    COLLECTION: "collections",
+    SONGS: "songs",
 };
 
 export default COLLECTIONS;

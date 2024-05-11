@@ -4,13 +4,13 @@ export const load: LayoutServerLoad = async ({ locals, fetch, params }) =>
 {
     const slug = "collections";
     const { id } = params;
-    const res = await fetch(`/api/${slug}/${id}`);
+    const res = await fetch(`${API_PATH}/${slug}/${id}`);
     const data = await res.json();
 
-    const colRes = await fetch(`/api/collections?name=${slug}`);
+    const colRes = await fetch(`${API_PATH}/collections?name=${slug}`);
     const colData = await colRes.json();
 
-    const colTypesRes = await fetch(`/api/options?name=colTypes&size=100`);
+    const colTypesRes = await fetch(`${API_PATH}/options?name=colTypes&size=100`);
     const colTypesData = await colTypesRes.json();
 
     return {

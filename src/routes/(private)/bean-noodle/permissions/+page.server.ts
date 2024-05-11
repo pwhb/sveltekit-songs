@@ -1,16 +1,16 @@
-import { emptyOption } from '$lib/consts/common';
+import { emptyOption } from '$lib/constants/common';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, fetch, params, url }) =>
 {
     const slug = 'permissions';
-    const res = await fetch(`/api/${slug}${url.search ? url.search + "&" : "?"}sort_by=name`);
+    const res = await fetch(`${API_PATH}/${slug}${url.search ? url.search + "&" : "?"}sort_by=name`);
     const data = await res.json();
 
-    const colRes = await fetch(`/api/collections`);
+    const colRes = await fetch(`${API_PATH}/collections`);
     const colData = await colRes.json();
 
-    const actionRes = await fetch(`/api/options?name=permissions&select=label,value&size=100`);
+    const actionRes = await fetch(`${API_PATH}/options?name=permissions&select=label,value&size=100`);
     const actionData = await actionRes.json();
 
     return {

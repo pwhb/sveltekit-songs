@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import TailwindTypes from '$lib/consts/TailwindTypes';
+	import ColorType from '$lib/constants/tailwind';
 	import { showToast } from '$lib/stores/toast';
 	import { closeModal, openModal } from '$lib/utils/dialog';
-	import { DocumentMode } from '$lib/utils/enums';
+	import { DocumentMode } from '$lib/constants/common';
 	import { parseDate } from '$lib/utils/formatters';
 	import DraggableList from '../common/DraggableList.svelte';
 	import DefaultDialog from '../dialog/DefaultDialog.svelte';
@@ -23,7 +23,7 @@
 	const handleSubmit = async () => {
 		try {
 			isLoading = true;
-			const url = `/api/${slug}${mode === DocumentMode.Create ? '' : `/${details._id}`}`;
+			const url = `${API_PATH}/${slug}${mode === DocumentMode.Create ? '' : `/${details._id}`}`;
 
 			const res = await fetch(url, {
 				headers: {
@@ -35,7 +35,7 @@
 
 			const data = await res.json();
 
-			if (data.success) {
+			if (data.message && data.message === MESSAGES.SUCCESS) {
 				goto(`/bean-noodle/${slug}`);
 				showToast(
 					mode === DocumentMode.Create
@@ -57,7 +57,7 @@
 	text={`Are you sure you want to delete ${details._id}?`}
 	onSubmit={async () => {
 		isLoading = true;
-		const url = `/api/${slug}/${details._id}`;
+		const url = `${API_PATH}/${slug}/${details._id}`;
 		const res = await fetch(url, {
 			method: 'DELETE'
 		});
@@ -66,8 +66,8 @@
 
 		isLoading = false;
 		closeModal('delete_item');
-		if (data.success) {
-			showToast('Deleted Successfully!', TailwindTypes.error);
+		if (data.message && data.message === MESSAGES.SUCCESS) {
+			showToast('Deleted Successfully!', ColorType.error);
 			goto(`/bean-noodle/${slug}`);
 		}
 	}}

@@ -1,20 +1,18 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-
-	// @ts-nocheck
 	import { page } from '$app/stores';
-	import TailwindTypes from '$lib/consts/TailwindTypes';
+	import { API_PATH } from '$lib/constants/constants';
+	import MESSAGES from '$lib/constants/messages';
+	import ColorType from '$lib/constants/tailwind';
 	import { showToast } from '$lib/stores/toast';
+	import { getUrlFromQuery } from '$lib/utils/common';
 	import { closeModal, openModal } from '$lib/utils/dialog';
 	import { parseDate } from '$lib/utils/formatters';
 	import DefaultDialog from '../dialog/DefaultDialog.svelte';
+	import TableHead from './TableHead.svelte';
 	const { slug, tableConfig, selectConfig } = $page.data;
 
 	const query = Object.fromEntries($page.url.searchParams);
-
-	const getUrlFromQuery = (query: any) =>
-		$page.url.pathname + `?${new URLSearchParams(query).toString()}`;
-
 	const searchQuery: any = {
 		...query,
 		active: true
@@ -30,7 +28,7 @@
 	text={`Are you sure you want to delete ${idToBeDeleted}?`}
 	onSubmit={async () => {
 		isLoading = true;
-		const url = `/api/${slug}/${idToBeDeleted}`;
+		const url = `${API_PATH}/${slug}/${idToBeDeleted}`;
 		const res = await fetch(url, {
 			method: 'DELETE'
 		});
@@ -39,8 +37,8 @@
 
 		isLoading = false;
 		closeModal('delete_item');
-		if (data.success) {
-			showToast('Deleted Successfully!', TailwindTypes.error);
+		if (data.message && data.message === MESSAGES.SUCCESS) {
+			showToast('Deleted Successfully!', ColorType.error);
 			goto(`/bean-noodle/${slug}`);
 		}
 	}}
@@ -49,35 +47,7 @@
 
 <table class="table">
 	<!-- head -->
-	<thead>
-		<tr>
-			<th></th>
-			{#each tableConfig.columns as column}
-				{#if column.displayable}
-					<th>
-						<div class="flex flex-row justify-between items-center">
-							{column.label}
-							<div class="flex flex-col">
-								{#if $page.url.searchParams.get('sort_by') !== column.value}
-									<a href={getUrlFromQuery({ ...query, sort_by: column.value })}>
-										<img class="w-4 h-4" src="/sort-up-svgrepo-com.svg" alt="sort-up" />
-									</a>
-								{/if}
-								{#if $page.url.searchParams.get('sort_by') !== '-' + column.value}
-									<a href={getUrlFromQuery({ ...query, sort_by: '-' + column.value })}>
-										<img class="w-4 h-4" src="/sort-down-svgrepo-com.svg" alt="sort-down" />
-									</a>
-								{/if}
-							</div>
-						</div>
-					</th>
-				{/if}
-			{/each}
-			<th>
-				<a class="text-white btn btn-xs btn-info" href={`${$page.url.pathname}/create`}>create</a>
-			</th>
-		</tr>
-	</thead>
+	<TableHead />
 	<tbody>
 		<!-- row 1 -->
 		<tr>
@@ -96,9 +66,9 @@
 								class="w-20 select-xs select select-bordered"
 								bind:value={searchQuery[column.label]}
 							>
-								{#each selectConfig[column.value] as select}
+								<!-- {#each selectConfig[column.value] as select}
 									<option value={select.value}>{select.label}</option>
-								{/each}
+								{/each} -->
 							</select>
 						</td>
 					{:else}
@@ -113,7 +83,9 @@
 				{/if}
 			{/each}
 			<td>
-				<a class="btn btn-xs btn-primary" href={getUrlFromQuery(searchQuery)}>search</a>
+				<a class="btn btn-xs btn-primary" href={getUrlFromQuery($page.url.pathname, searchQuery)}
+					>search</a
+				>
 				<a class="text-white btn btn-xs btn-error" href={$page.url.pathname}>clear</a>
 			</td>
 		</tr>
@@ -170,7 +142,7 @@
 		{#if $page.data[slug].page > 0}
 			<a
 				class="join-item btn btn-xs"
-				href={getUrlFromQuery({
+				href={getUrlFromQuery($page.url.pathname, {
 					...Object.fromEntries($page.url.searchParams),
 					page: $page.data[slug].page - 1
 				})}>«</a
@@ -182,7 +154,7 @@
 		{#if $page.data[slug].page < Math.floor($page.data[slug].count / $page.data[slug].size)}
 			<a
 				class="join-item btn btn-xs"
-				href={getUrlFromQuery({
+				href={getUrlFromQuery($page.url.pathname, {
 					...Object.fromEntries($page.url.searchParams),
 					page: $page.data[slug].page + 1
 				})}>»</a

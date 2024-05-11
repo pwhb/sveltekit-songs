@@ -9,3 +9,5 @@ export const getAvatarPlaceholder = (user: any) =>
 
 	return user.username[0];
 };
+
+export const getUrlFromQuery = (pathname: string, query: any) => pathname + `?${new URLSearchParams(query).toString()}`;

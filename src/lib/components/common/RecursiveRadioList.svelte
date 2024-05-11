@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DocumentMode } from '$lib/utils/enums';
+	import { DocumentMode } from '$lib/constants/common';
 	export let tree: any[] = [];
 	export let mode: DocumentMode;
 </script>

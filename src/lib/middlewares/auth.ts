@@ -13,11 +13,16 @@ export function authenticate(handler: RequestHandler)
 
         try
         {
-            const header = event.request.headers.get("Authorization");
+            let token = event.cookies.get('token');
             const unauthenticatedResponse = json({ message: MESSAGES.UNAUTHENTICATED }, { status: 401 });
-            if (!header) return unauthenticatedResponse;
-            const [bearer, token] = header.split(" ");
-            if (bearer !== "Bearer" || !token) return unauthenticatedResponse;
+            if (!token)
+            {
+                const header = event.request.headers.get("Authorization");
+                if (!header) return unauthenticatedResponse;
+                const [bearer, tokenFromHeader] = header.split(" ");
+                if (bearer !== "Bearer" || !token) return unauthenticatedResponse;
+                token = tokenFromHeader;
+            }
 
             const decoded: any = verifyToken(token);
 
@@ -29,7 +34,7 @@ export function authenticate(handler: RequestHandler)
                     history: 0
                 }
             });
-            if (!user || user.status !== UserStatus.ACTIVE) return unauthenticatedResponse;
+            if (!user || !user.active) return unauthenticatedResponse;
 
             event.locals.user = user;
 
@@ -52,7 +57,7 @@ export function authorize(handler: RequestHandler, allowed: [string] = ["root"])
         {
             const unauthorizedResponse = json({ message: MESSAGES.UNAUTHORIZED }, { status: 401 });
 
-            if (!event.locals.user || !event.locals.user.role || !allowed.includes(event.locals.user.role)) return unauthorizedResponse;
+            if (!event.locals.user) return unauthorizedResponse;
 
             return handler(event);
         } catch (error)
