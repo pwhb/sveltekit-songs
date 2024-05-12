@@ -9,7 +9,7 @@ const CollectionSchema = z.object({
         type: z.string().optional(),
         editable: z.boolean().default(false),
         displayable: z.boolean().default(false),
-        slug: z.string().optional()
+        slug_key: z.string().optional()
     })).default([]),
     active: z.boolean().default(false)
 });

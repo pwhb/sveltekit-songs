@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	export let col: any;
 	export let colTypes: any;
 	export let payload: any;
@@ -25,12 +26,14 @@
 	<input type="checkbox" bind:checked={col.displayable} />
 </td>
 <td>
-	<input
-		type="text"
-		class="w-24 input input-xs"
-		bind:value={col.slug}
-		disabled={col.type !== 'select'}
-	/>
+	<select bind:value={col.slug_key} disabled={col.type !== 'select'}>
+		<option value={``}>None</option>
+		{#each $page.data.collections as collection}
+			<option value={`${collection.name}:${collection.key || 'name'}`}
+				>{`${collection.name}:${collection.key || 'name'}`}</option
+			>
+		{/each}
+	</select>
 </td>
 <td>
 	<button

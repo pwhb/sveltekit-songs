@@ -15,6 +15,8 @@
 
 	let idToBeDeleted: string = '';
 	let isLoading = false;
+
+	console.log('page', $page.data);
 </script>
 
 <DefaultDialog

@@ -31,7 +31,7 @@
 			{:else if column.type === 'select'}
 				<td
 					><span class={`badge badge-outline badge-ghost}`}
-						>{row[column.value] ? row[column.value] : '-'}
+						>{row[column.value] ? row[column.value.replace('Id', '')] : '-'}
 					</span>
 				</td>
 			{:else}

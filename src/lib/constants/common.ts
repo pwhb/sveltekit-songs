@@ -24,4 +24,4 @@ export enum DocumentMode
     Edit
 }
 
-export const emptyOption = { label: 'None', value: '' };
+export const emptyOption = { label: 'None', value: null };

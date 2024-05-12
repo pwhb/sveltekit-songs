@@ -1,13 +1,13 @@
 import COLLECTIONS from '$lib/constants/collections';
 import MESSAGES from '$lib/constants/messages';
 import { authorize } from '$lib/middlewares/auth';
-import OptionSchema from '$lib/schemas/options';
+import MenuSchema from '$lib/schemas/menus';
 import { findByIdAndRemove, findById, findByIdAndUpdate } from '$lib/services/mongo';
 import exceptionHandler from '$lib/utils/exceptions';
 import { json, type RequestEvent, type RequestHandler } from '@sveltejs/kit';
 
 
-const COLLECTION = COLLECTIONS.OPTIONS;
+const COLLECTION = COLLECTIONS.MENUS;
 
 export const GET: RequestHandler = authorize(async ({ params }: RequestEvent) =>
 {
@@ -32,7 +32,7 @@ export const PATCH: RequestHandler = authorize(async ({ request, params }: Reque
     {
         const { id } = params;
         const body = await request.json();
-        const validated = OptionSchema.parse(body);
+        const validated = MenuSchema.parse(body);
         const res = await findByIdAndUpdate(COLLECTION, id as string, validated, {
             returnDocument: 'after'
         });

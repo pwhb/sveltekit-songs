@@ -6,7 +6,7 @@
 		...query,
 		active: true
 	};
-	const { tableConfig } = $page.data;
+	const { tableConfig, optionsConfig } = $page.data;
 </script>
 
 <tr>
@@ -25,9 +25,9 @@
 						class="w-20 select-xs select select-bordered"
 						bind:value={searchQuery[column.label]}
 					>
-						<!-- {#each selectConfig[column.value] as select}
+						{#each optionsConfig[column.value] as select}
                             <option value={select.value}>{select.label}</option>
-                        {/each} -->
+                        {/each}
 					</select>
 				</td>
 			{:else}

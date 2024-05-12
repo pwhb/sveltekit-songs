@@ -1,4 +1,5 @@
 import { emptyOption } from '$lib/constants/common';
+import { API_PATH } from '$lib/constants/constants';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, fetch, params, url }) =>

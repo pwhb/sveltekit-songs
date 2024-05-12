@@ -17,7 +17,7 @@ export const POST: RequestHandler = async ({ request }) =>
 
         const existingUser = await findOne(COLLECTIONS.USERS, { username: validated.username });
 
-        console.log({ existingUser });
+  
 
         if (!existingUser || !existingUser.active)
         {

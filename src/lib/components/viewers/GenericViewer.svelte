@@ -12,7 +12,7 @@
 
 	export let mode: DocumentMode;
 
-	const { tableConfig, details: detailsRes, slug, selectConfig } = $page.data;
+	const { tableConfig, details: detailsRes, slug, optionsConfig } = $page.data;
 
 	const details = mode === DocumentMode.Create ? {} : detailsRes.data;
 	const payload = {
@@ -110,13 +110,13 @@
 								<input type="checkbox" class="toggle" bind:checked={payload[column.value]} />
 							{:else if column.type === 'select'}
 								<select class="select select-xs" bind:value={payload[column.value]}>
-									{#each selectConfig[column.value] as { label, value }}
+									{#each optionsConfig[column.value] as { label, value }}
 										<option {value}>{label}</option>
 									{/each}
 								</select>
 							{:else if column.type === 'multi-select'}
 								<select class="select select-xs" bind:value={payload[column.value]} multiple>
-									{#each selectConfig[column.value] as { label, value }}
+									{#each optionsConfig[column.value] as { label, value }}
 										<option {value}>{label}</option>
 									{/each}
 								</select>

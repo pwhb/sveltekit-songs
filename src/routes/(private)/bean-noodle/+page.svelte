@@ -3,7 +3,6 @@
 
 	import { page } from '$app/stores';
 	const { menus } = $page.data;
-	console.log({ menus });
 </script>
 
 <ul class="max-w-xs rounded-lg menu menu-xs">

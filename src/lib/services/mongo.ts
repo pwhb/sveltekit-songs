@@ -1,5 +1,5 @@
 import { MONGODB_DATABASE } from "$env/static/private";
-import { ObjectId, type Filter, type FindOneAndDeleteOptions, type FindOneAndUpdateOptions, type FindOptions } from "mongodb";
+import { ObjectId, type Document, type Filter, type FindOneAndDeleteOptions, type FindOneAndUpdateOptions, type FindOptions } from "mongodb";
 import clientPromise from "./mongodb";
 
 export async function insertOne(collection: string, doc: any, by?: any)
@@ -162,3 +162,49 @@ export async function countDocuments(collection: string, filter: Filter<any>)
 
 
 
+export async function aggregate(collection: string, pipeline: Document[] = [])
+{
+    try
+    {
+        const client = await clientPromise;
+        const col = client.db(MONGODB_DATABASE).collection(collection);
+        return await col.aggregate(pipeline).toArray();
+    }
+    catch (error)
+    {
+        console.error(error);
+        return null;
+    }
+
+}
+
+
+export function getLookupPipeline({ key, from, foreignField, foreignKey, as }: {
+    key: string;
+    from: string;
+    foreignField?: string;
+    foreignKey?: string;
+    as: string;
+})
+{
+    return [
+        {
+            $addFields: {
+                [key]: { $toObjectId: `$${key}` }
+            }
+        },
+        {
+            $lookup: {
+                from: from,
+                localField: key,
+                foreignField: foreignField || "_id",
+                as: as
+            }
+        },
+        {
+            $addFields: {
+                [as]: { $arrayElemAt: [`$${as}.${foreignKey || 'name'}`, 0] }
+            }
+        },
+    ];
+}
