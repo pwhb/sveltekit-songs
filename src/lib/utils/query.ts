@@ -114,7 +114,7 @@ export function getSort(sort_by?: any)
         }
     } else
     {
-        sort["createdAt"] = -1;
+        sort["history.created.at"] = -1;
     }
     return sort;
 }

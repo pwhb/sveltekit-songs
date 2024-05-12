@@ -1,14 +1,14 @@
 import COLLECTIONS from '$lib/constants/collections';
 import MESSAGES from '$lib/constants/messages';
 import { authorize } from '$lib/middlewares/auth';
-import CollectionSchema from '$lib/schemas/collections';
-
-import { countDocuments, findMany, insertOne } from '$lib/services/mongo';
+import UploadSchema from '$lib/schemas/uploads';
+import { aggregate, countDocuments, findMany, getLookupPipeline, insertOne } from '$lib/services/mongo';
 import exceptionHandler from '$lib/utils/exceptions';
 import { getOptions, QueryType } from '$lib/utils/query';
 import { json, type RequestEvent, type RequestHandler } from '@sveltejs/kit';
+import type { Document } from 'mongodb';
 
-const COLLECTION = COLLECTIONS.COLLECTION;
+const COLLECTION = COLLECTIONS.UPLOADS;
 
 export const GET: RequestHandler = async ({ url }: RequestEvent) =>
 {
@@ -24,15 +24,39 @@ export const GET: RequestHandler = async ({ url }: RequestEvent) =>
             },
             {
                 key: 'name',
-                type: QueryType.String,
+                type: QueryType.String
             },
             {
                 key: 'active',
                 type: QueryType.Boolean,
             },
         ]);
-
-        const data = await findMany(COLLECTION, filter, { skip, limit, sort, projection });
+        const pipeline: Document[] = [
+            {
+                $match: filter
+            },
+            ...getLookupPipeline({
+                key: 'history.created.by',
+                from: COLLECTIONS.USERS,
+                foreignField: '_id',
+                foreignKey: 'username',
+                as: 'history.created.by'
+            }),
+            {
+                $sort: sort
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            }
+        ];
+        if (Object.keys(projection).length)
+        {
+            pipeline.push({ $project: projection });
+        }
+        const data = await aggregate(COLLECTION, pipeline);
         const count = await countDocuments(COLLECTION, filter);
         return json({ message: MESSAGES.SUCCESS, page, size: limit, count, data }, { status: 200 });
     } catch (error)
@@ -47,7 +71,7 @@ export const POST: RequestHandler = authorize(async ({ request, locals }: Reques
     {
 
         const body = await request.json();
-        const validated = CollectionSchema.parse(body);
+        const validated = UploadSchema.parse(body);
 
         const res = await insertOne(COLLECTION, validated, locals.user._id.toString());
         return json({ message: MESSAGES.SUCCESS, data: res }, { status: 200 });

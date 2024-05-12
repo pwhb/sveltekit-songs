@@ -44,6 +44,9 @@
 						? 'Created Successfully! Redirecting ...'
 						: 'Updated Successfully! Redirecting ...'
 				);
+			} else {
+				const message = `${data.message || 'Something went wrong'}\n${data.error ? JSON.stringify(data.error) : ''}`;
+				showToast(message, ColorType.error);
 			}
 		} catch (e) {
 			console.error(e);

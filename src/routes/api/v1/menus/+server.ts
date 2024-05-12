@@ -44,7 +44,6 @@ export const GET: RequestHandler = async ({ url }: RequestEvent) =>
             },
         ]);
 
-        // const data = await findMany(COLLECTION, filter, { skip, limit, sort, projection });
         const pipeline: Document[] = [
             {
                 $match: filter
@@ -62,6 +61,13 @@ export const GET: RequestHandler = async ({ url }: RequestEvent) =>
                 foreignField: '_id',
                 foreignKey: 'name',
                 as: 'collection'
+            }),
+            ...getLookupPipeline({
+                key: 'history.created.by',
+                from: COLLECTIONS.USERS,
+                foreignField: '_id',
+                foreignKey: 'username',
+                as: 'history.created.by'
             }),
             {
                 $sort: sort
@@ -94,7 +100,7 @@ export const POST: RequestHandler = authorize(async ({ request, locals }: Reques
         const body = await request.json();
         const validated = MenuSchema.parse(body);
 
-        const res = await insertOne(COLLECTION, validated);
+        const res = await insertOne(COLLECTION, validated, locals.user._id.toString());
         return json({ message: MESSAGES.SUCCESS, data: res }, { status: 200 });
     } catch (error)
     {

@@ -8,6 +8,7 @@ const MESSAGES = {
     USERNAME_ALREADY_TAKEN: "Username is already taken.",
     INVALID_CREDENTIALS: "Invalid credentials.",
     FAILED_TO_CREATE_USER: "Failed to create user.",
+    VALIDATION_ERROR: "Validation error.",
     USER_NOT_FOUND: "User not found.",
     NOT_FOUND: "Not found.",
 };

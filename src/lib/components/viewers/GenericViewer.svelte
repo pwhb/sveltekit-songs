@@ -42,6 +42,9 @@
 						? 'Created Successfully! Redirecting ...'
 						: 'Updated Successfully! Redirecting ...'
 				);
+			} else {
+				const message = `${data.message || 'Something went wrong'}\n${data.error ? JSON.stringify(data.error) : ''}`;
+				showToast(message, ColorType.error);
 			}
 		} catch (e) {
 			console.error(e);
@@ -97,7 +100,7 @@
 								</p>
 							{:else if column.type === 'string'}
 								<input type="text" class="input input-xs" bind:value={payload[column.value]} />
-							{:else if column.type === 'preview'}
+							{:else if column.type === 'image'}
 								{#if payload[column.value]}
 									<img
 										src={payload[column.value]}

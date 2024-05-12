@@ -47,7 +47,7 @@ export const POST: RequestHandler = authorize(async ({ request, locals }: Reques
 
         const body = await request.json();
         const validated = ConfigSchema.parse(body);
-        const res = await insertOne(COLLECTION, validated, locals.user._id);
+        const res = await insertOne(COLLECTION, validated, locals.user._id.toString());
         return json({ message: MESSAGES.SUCCESS, data: res }, { status: 200 });
     } catch (error)
     {

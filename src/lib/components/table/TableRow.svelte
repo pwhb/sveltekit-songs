@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { parseKey } from '$lib/utils/common';
 	import { parseDate } from '$lib/utils/formatters';
+	import PreviewTableData from './PreviewTableData.svelte';
 
 	export let row: any;
 	export let idx: number;
@@ -18,24 +19,28 @@
 				<td>{parseDate(parseKey(row, column.value))}</td>
 			{:else if column.type === 'boolean'}
 				<td>
-					<span class={`badge text-white ${row[column.value] ? 'badge-success' : 'badge-error'}`}>
-						{row[column.value]}
+					<span
+						class={`badge text-white ${parseKey(row, column.value) ? 'badge-success' : 'badge-error'}`}
+					>
+						{parseKey(row, column.value)}
 					</span>
 				</td>
 			{:else if column.type === 'preview'}
+				<PreviewTableData {row} {column} />
+			{:else if column.type === 'image'}
 				<td>
-					{#if row[column.value]}
-						<img src={row[column.value]} alt={row[column.label]} class="mx-auto h-10" />
+					{#if parseKey(row, column.value)}
+						<img src={parseKey(row, column.value)} alt={row[column.label]} class="mx-auto h-10" />
 					{/if}
 				</td>
 			{:else if column.type === 'select'}
 				<td
 					><span class={`badge badge-outline badge-ghost}`}
-						>{row[column.value] ? row[column.value.replace('Id', '')] : '-'}
+						>{parseKey(row, column.value) ? row[column.value.replace('Id', '')] : '-'}
 					</span>
 				</td>
 			{:else}
-				<td>{row[column.value] ? row[column.value] : '-'}</td>
+				<td>{parseKey(row, column.value) ? parseKey(row, column.value) : '-'}</td>
 			{/if}
 		{/if}
 	{/each}

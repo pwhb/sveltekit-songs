@@ -10,7 +10,14 @@ export const getAvatarPlaceholder = (user: any) =>
 	return user.username[0];
 };
 
-export const getUrlFromQuery = (pathname: string, query: any) => pathname + `?${new URLSearchParams(query).toString()}`;
+export const getUrlFromQuery = (pathname: string, query: any) =>
+{
+	for (const [key, value] of Object.entries(query))
+	{
+		if (value === undefined || value === null || value === "" || value === "null") delete query[key];
+	}
+	return pathname + `?${new URLSearchParams(query).toString()}`;
+};
 
 export const parseKey = (obj: any, key: string) =>
 {

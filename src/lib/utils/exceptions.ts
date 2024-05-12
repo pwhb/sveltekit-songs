@@ -1,3 +1,4 @@
+import MESSAGES from "$lib/constants/messages";
 import { json } from "@sveltejs/kit";
 import { ZodError } from "zod";
 
@@ -22,6 +23,7 @@ export const zodExceptionHandler = (error: any) =>
         errorResponse[issue.path[0]] = issue.message;
     });
     return json({
+        message: MESSAGES.VALIDATION_ERROR,
         error: errorResponse
     }, { status: 400 });
 }; 

@@ -6,6 +6,7 @@ const COLLECTIONS = {
     MENUS: "menus",
     COLLECTION: "collections",
     SONGS: "songs",
+    UPLOADS: "uploads",
 };
 
 export default COLLECTIONS;

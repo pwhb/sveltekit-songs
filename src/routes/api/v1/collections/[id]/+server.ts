@@ -27,7 +27,7 @@ export const GET: RequestHandler = authorize(async ({ params }: RequestEvent) =>
     }
 });
 
-export const PATCH: RequestHandler = authorize(async ({ request, params }: RequestEvent) =>
+export const PATCH: RequestHandler = authorize(async ({ request, params, locals }: RequestEvent) =>
 {
     try
     {
@@ -36,7 +36,7 @@ export const PATCH: RequestHandler = authorize(async ({ request, params }: Reque
         const validated = CollectionSchema.parse(body);
         const res = await findByIdAndUpdate(COLLECTION, id as string, validated, {
             returnDocument: 'after'
-        });
+        }, locals.user._id.toString());
         if (!res)
         {
             return json({ message: MESSAGES.NOT_FOUND }, { status: 404 });
