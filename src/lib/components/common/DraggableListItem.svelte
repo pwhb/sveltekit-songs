@@ -25,6 +25,14 @@
 	<input type="checkbox" bind:checked={col.displayable} />
 </td>
 <td>
+	<input
+		type="text"
+		class="w-24 input input-xs"
+		bind:value={col.slug}
+		disabled={col.type !== 'select'}
+	/>
+</td>
+<td>
 	<button
 		class="text-white btn btn-xs btn-error"
 		on:click={() => {

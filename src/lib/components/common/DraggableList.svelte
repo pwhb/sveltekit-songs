@@ -9,7 +9,6 @@
 
 	let hovering = false;
 
-	// @ts-ignore
 	const drop = (event, target) => {
 		event.dataTransfer.dropEffect = 'move';
 		const start = parseInt(event.dataTransfer.getData('text/plain'));
@@ -23,11 +22,10 @@
 			newTracklist.splice(start + 1, 1);
 		}
 		payload['columns'] = newTracklist;
-		// @ts-ignore
+
 		hovering = null;
 	};
 
-	// @ts-ignore
 	const dragstart = (event, i) => {
 		event.dataTransfer.effectAllowed = 'move';
 		event.dataTransfer.dropEffect = 'move';

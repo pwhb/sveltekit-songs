@@ -116,6 +116,7 @@
 								<th>type</th>
 								<th>editable</th>
 								<th>displayable</th>
+								<th>slug</th>
 							</tr>
 
 							<DraggableList {payload} {colTypes} />

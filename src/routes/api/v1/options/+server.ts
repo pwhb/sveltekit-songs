@@ -22,6 +22,10 @@ export const GET: RequestHandler = async ({ url }: RequestEvent) =>
                 searchedFields: ['name']
             },
             {
+                key: 'name',
+                type: QueryType.String
+            },
+            {
                 key: 'active',
                 type: QueryType.Boolean,
             },
