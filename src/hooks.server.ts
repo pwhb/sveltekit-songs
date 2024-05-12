@@ -10,13 +10,14 @@ import { ObjectId } from 'mongodb';
 
 const authMiddleware: Handle = async ({ event, resolve }) =>
 {
-	const token = event.cookies.get('token') as string;
-	if (!token) return await resolve(event);
-	const decoded: any = verifyToken(token);
-	if (!decoded) return await resolve(event);
 
 	try
 	{
+		const token = event.cookies.get('token') as string;
+		if (!token) return await resolve(event);
+		const decoded: any = verifyToken(token);
+		if (!decoded) return await resolve(event);
+
 		const user = await findById(COLLECTIONS.USERS, decoded._id);
 		event.locals.user = user;
 	} catch (error)

@@ -8,6 +8,8 @@
 	import { parseDate } from '$lib/utils/formatters';
 	import DraggableList from '../common/DraggableList.svelte';
 	import DefaultDialog from '../dialog/DefaultDialog.svelte';
+	import { API_PATH } from '$lib/constants/constants';
+	import MESSAGES from '$lib/constants/messages';
 	export let mode: DocumentMode;
 
 	const { tableConfig, details: detailsRes, slug, colTypes } = $page.data;

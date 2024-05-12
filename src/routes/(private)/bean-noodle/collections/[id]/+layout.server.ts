@@ -1,3 +1,4 @@
+import { API_PATH } from '$lib/constants/constants';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ locals, fetch, params }) =>
