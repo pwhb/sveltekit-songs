@@ -1,80 +1,25 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import ColorType from '$lib/constants/tailwind';
-	import { showToast } from '$lib/stores/toast';
-	import { closeModal, openModal } from '$lib/utils/dialog';
+	import { openModal } from '$lib/utils/dialog';
 	import { DocumentMode } from '$lib/constants/common';
 	import { parseDate } from '$lib/utils/formatters';
 	import DefaultDialog from '../dialog/DefaultDialog.svelte';
-	import { API_PATH } from '$lib/constants/constants';
-	import MESSAGES from '$lib/constants/messages';
+	import { isLoading } from '$lib/stores/viewer';
 
 	export let mode: DocumentMode;
+	export let handleSubmit: () => void;
+	export let handleDelete: () => void;
+	export let payload: any;
 
 	const { tableConfig, details: detailsRes, slug, optionsConfig } = $page.data;
-
-	const details = mode === DocumentMode.Create ? {} : detailsRes.data;
-	const payload = {
-		...details
-	};
-
-	let isLoading = false;
-
-	const handleSubmit = async () => {
-		try {
-			isLoading = true;
-			const url = `${API_PATH}/${slug}${mode === DocumentMode.Create ? '' : `/${details._id}`}`;
-
-			const res = await fetch(url, {
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				method: mode === DocumentMode.Create ? 'POST' : 'PATCH',
-				body: JSON.stringify(payload)
-			});
-
-			const data = await res.json();
-			if (data.message && data.message === MESSAGES.SUCCESS) {
-				goto(`/bean-noodle/${slug}`);
-				showToast(
-					mode === DocumentMode.Create
-						? 'Created Successfully! Redirecting ...'
-						: 'Updated Successfully! Redirecting ...'
-				);
-			} else {
-				const message = `${data.message || 'Something went wrong'}\n${data.error ? JSON.stringify(data.error) : ''}`;
-				showToast(message, ColorType.error);
-			}
-		} catch (e) {
-			console.error(e);
-		} finally {
-			isLoading = false;
-		}
-	};
 </script>
 
 <DefaultDialog
 	modalId="delete_item"
 	title="Are you sure?"
-	text={`Are you sure you want to delete ${details._id}?`}
-	onSubmit={async () => {
-		isLoading = true;
-		const url = `${API_PATH}/${slug}/${details._id}`;
-		const res = await fetch(url, {
-			method: 'DELETE'
-		});
-
-		const data = await res.json();
-
-		isLoading = false;
-		closeModal('delete_item');
-		if (data.message && data.message === MESSAGES.SUCCESS) {
-			showToast('Deleted Successfully!', ColorType.error);
-			goto(`/bean-noodle/${slug}`);
-		}
-	}}
-	disabled={isLoading}
+	text={`Are you sure you want to delete ${detailsRes?.data._id}?`}
+	onSubmit={handleDelete}
+	disabled={$isLoading}
 />
 
 <div class="overflow-x-auto mx-auto max-w-md">
@@ -85,7 +30,7 @@
 				{#if mode !== DocumentMode.Create}
 					<tr>
 						<th>objectId</th>
-						<td>{details['_id']}</td>
+						<td>{detailsRes?.data['_id']}</td>
 					</tr>
 				{/if}
 				{#each tableConfig.columns as column}
@@ -95,8 +40,8 @@
 							{#if mode === DocumentMode.View || !column.editable}
 								<p class="input input-xs input-ghost">
 									{column.type === 'date'
-										? parseDate(details[column.value])
-										: details[column.value]}
+										? parseDate(detailsRes?.data[column.value])
+										: detailsRes?.data[column.value]}
 								</p>
 							{:else if column.type === 'string'}
 								<input type="text" class="input input-xs" bind:value={payload[column.value]} />
@@ -127,15 +72,17 @@
 						</td>
 					</tr>
 				{/each}
+
+				<slot />
 			</tbody>
 		</table>
 		<div class="flex gap-10 justify-center m-10">
 			{#if mode === DocumentMode.Create}
-				<button class="text-white btn btn-sm btn-success" type="submit" disabled={isLoading}
+				<button class="text-white btn btn-sm btn-success" type="submit" disabled={$isLoading}
 					>create</button
 				>
 			{:else if mode === DocumentMode.Edit}
-				<button class="text-white btn btn-sm btn-info" type="submit" disabled={isLoading}
+				<button class="text-white btn btn-sm btn-info" type="submit" disabled={$isLoading}
 					>save</button
 				>
 				<button
@@ -148,7 +95,7 @@
 			{:else}
 				<a
 					class="text-white btn btn-sm btn-primary"
-					href={`/bean-noodle/${slug}/${details._id}/edit`}>edit</a
+					href={`/bean-noodle/${slug}/${detailsRes?.data._id}/edit`}>edit</a
 				>
 			{/if}
 		</div>
