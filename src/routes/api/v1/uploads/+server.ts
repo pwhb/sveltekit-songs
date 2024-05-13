@@ -10,7 +10,7 @@ import type { Document } from 'mongodb';
 
 const COLLECTION = COLLECTIONS.UPLOADS;
 
-export const GET: RequestHandler = async ({ url }: RequestEvent) =>
+export const GET: RequestHandler = authorize(async ({ url, locals }: RequestEvent) =>
 {
     try
     {
@@ -31,6 +31,7 @@ export const GET: RequestHandler = async ({ url }: RequestEvent) =>
                 type: QueryType.Boolean,
             },
         ]);
+        filter["history.created.by"] = locals.user._id.toString();
         const pipeline: Document[] = [
             {
                 $match: filter
@@ -63,7 +64,7 @@ export const GET: RequestHandler = async ({ url }: RequestEvent) =>
     {
         return exceptionHandler(error);
     }
-};
+});
 
 export const POST: RequestHandler = authorize(async ({ request, locals }: RequestEvent) =>
 {

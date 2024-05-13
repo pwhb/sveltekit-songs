@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { parseKey } from '$lib/utils/common';
+	import { PUBLIC_BASE_URL } from '$env/static/public';
+	import COLLECTIONS from '$lib/constants/collections';
+	import { API_PATH } from '$lib/constants/constants';
+	import { copyToClipboard, parseKey } from '$lib/utils/common';
 	import { parseDate } from '$lib/utils/formatters';
 	import PreviewTableData from './PreviewTableData.svelte';
 
@@ -46,7 +49,19 @@
 	{/each}
 	<td>
 		<a class="btn btn-xs btn-neutral" href={`/bean-noodle/${slug}/${row._id}`}>view</a>
-		<a class="btn btn-xs btn-primary" href={`/bean-noodle/${slug}/${row._id}/edit`}>edit</a>
+		{#if slug === COLLECTIONS.UPLOADS}
+			<button
+				class="text-white btn btn-xs btn-success"
+				on:click={() => {
+					copyToClipboard(
+						`${PUBLIC_BASE_URL}${API_PATH}/uploads/${row['_id']}`,
+						'Link copied to clipboard'
+					);
+				}}>copy</button
+			>
+		{:else}
+			<a class="btn btn-xs btn-primary" href={`/bean-noodle/${slug}/${row._id}/edit`}>edit</a>
+		{/if}
 		<button class="text-white btn btn-xs btn-error" on:click={onDelete}>delete</button>
 	</td>
 </tr>

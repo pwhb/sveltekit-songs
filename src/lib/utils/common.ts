@@ -1,3 +1,5 @@
+import { showToast } from "$lib/stores/toast";
+
 export const serialize = (payload: any) => JSON.parse(JSON.stringify(payload));
 
 export const getAvatarPlaceholder = (user: any) =>
@@ -24,4 +26,10 @@ export const parseKey = (obj: any, key: string) =>
 	const keys = key.split('.');
 	if (keys.length === 1) return obj[keys[0]];
 	return keys.reduce((o, k) => o && o[k], obj);
+};
+
+export const copyToClipboard = (text: string, toastText: string = "Text copied to clipboard") =>
+{
+	navigator.clipboard.writeText(text);
+	showToast(toastText);
 };

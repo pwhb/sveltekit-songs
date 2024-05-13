@@ -14,7 +14,9 @@
 	{#each tableConfig.columns as column}
 		{#if column.displayable}
 			{#if column.type === 'date'}
-				<td> </td>
+				<td></td>
+			{:else if column.type === 'preview'}
+				<td></td>
 			{:else if column.type === 'boolean'}
 				<td>
 					<input type="checkbox" class="toggle" bind:checked={searchQuery[column.label]} />
@@ -26,8 +28,8 @@
 						bind:value={searchQuery[column.label]}
 					>
 						{#each optionsConfig[column.value] as select}
-                            <option value={select.value}>{select.label}</option>
-                        {/each}
+							<option value={select.value}>{select.label}</option>
+						{/each}
 					</select>
 				</td>
 			{:else}
