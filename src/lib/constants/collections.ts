@@ -7,6 +7,7 @@ const COLLECTIONS = {
     COLLECTION: "collections",
     SONGS: "songs",
     UPLOADS: "uploads",
+    PERMISSIONS: "permissions"
 };
 
 export default COLLECTIONS;

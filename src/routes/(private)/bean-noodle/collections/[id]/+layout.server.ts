@@ -14,12 +14,14 @@ export const load: LayoutServerLoad = async ({ fetch, params }) =>
     const colTypesRes = await fetch(`${API_PATH}/options?name=colTypes&size=100`);
     const colTypesData = await colTypesRes.json();
 
-
+    const customOptionsRes = await fetch(`${API_PATH}/options/custom`);
+    const customOptions = await customOptionsRes.json();
 
     return {
         slug,
         details: data,
         collections: colData.data,
+        customOptions: customOptions.data,
         colTypes: colTypesData.data,
         tableConfig: colData.data.find((doc: any) => doc.name === slug)
     };

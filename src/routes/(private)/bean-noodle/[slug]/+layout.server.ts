@@ -11,13 +11,19 @@ export const load: LayoutServerLoad = async ({ params, fetch }) =>
     const selectCols = colData.data[0].columns.filter((col: any) => col.type === "select");
 
     const optionsConfig: any = {};
+
+    console.log({ selectCols });
+    
     if (selectCols.length)
     {
         for (const col of selectCols)
         {
+
             const [slug, key] = col.slug_key.split(":");
             if (!slug || !key) continue;
-            const optionsRes = await fetch(`${API_PATH}/${slug}?size=100`);
+
+            const url = slug === "custom" ? `${API_PATH}/options?name=${slug}&size=100` : `${API_PATH}/${slug}?size=100`;
+            const optionsRes = await fetch(url);
             const optionsData = await optionsRes.json();
             const options = [emptyOption, ...optionsData.data.map((doc: any) => ({ label: doc[key], value: doc._id, }))];
             optionsConfig[col.value] = options;

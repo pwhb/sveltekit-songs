@@ -33,6 +33,9 @@
 				>{`${collection.name}:${collection.key || 'name'}`}</option
 			>
 		{/each}
+		{#each $page.data.customOptions as option}
+			<option value={`custom:${option}`}>{`custom:${option}`}</option>
+		{/each}
 	</select>
 </td>
 <td>
