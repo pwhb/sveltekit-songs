@@ -1,7 +1,7 @@
 import COLLECTIONS from "$lib/constants/collections";
 import { UserStatus } from "$lib/constants/common";
 import MESSAGES from "$lib/constants/messages";
-import { findById } from "$lib/services/mongo";
+import { findById, findOne } from "$lib/services/mongo";
 import { verifyToken } from "$lib/utils/auth";
 import { json, type RequestEvent, type RequestHandler } from "@sveltejs/kit";
 
@@ -52,12 +52,23 @@ export function authorize(handler: RequestHandler, allowed: [string] = ["root"])
 {
     return authenticate(async function (event: RequestEvent)
     {
-
         try
         {
             const unauthorizedResponse = json({ message: MESSAGES.UNAUTHORIZED }, { status: 401 });
 
             if (!event.locals.user) return unauthorizedResponse;
+
+            const { request, params } = event;
+            const { method, url } = request;
+            let { pathname } = new URL(url);
+            if (params.id)
+            {
+                pathname = pathname.replace(params.id, ":id");
+            }
+
+            const permission = await findOne(COLLECTIONS.PERMISSIONS, { method, pattern: pathname });
+            console.log(event.locals.user);
+            
 
             return handler(event);
         } catch (error)

@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 const PermissionSchema = z.object({
-    collection: z.string(),
+    action: z.string(),
     method: z.string(),
-    route: z.string(),
+    pattern: z.string(),
     active: z.boolean().default(false)
 });
 

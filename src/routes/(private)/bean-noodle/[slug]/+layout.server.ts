@@ -13,7 +13,7 @@ export const load: LayoutServerLoad = async ({ params, fetch }) =>
     const optionsConfig: any = {};
 
     console.log({ selectCols });
-    
+
     if (selectCols.length)
     {
         for (const col of selectCols)
@@ -22,13 +22,23 @@ export const load: LayoutServerLoad = async ({ params, fetch }) =>
             const [slug, key] = col.slug_key.split(":");
             if (!slug || !key) continue;
 
-            const url = slug === "custom" ? `${API_PATH}/options?name=${slug}&size=100` : `${API_PATH}/${slug}?size=100`;
+            const url = slug === "custom" ? `${API_PATH}/options?name=${key}&size=100` : `${API_PATH}/${slug}?size=100`;
             const optionsRes = await fetch(url);
             const optionsData = await optionsRes.json();
-            const options = [emptyOption, ...optionsData.data.map((doc: any) => ({ label: doc[key], value: doc._id, }))];
+            const options = [emptyOption, ...optionsData.data.map((doc: any) => ({ label: doc[slug === "custom" ? "value" : key], value: doc._id, }))];
             optionsConfig[col.value] = options;
+            console.log({
+                slug,
+                key,
+                url,
+                options
+            });
+
         }
     }
+
+    console.log({ optionsConfig });
+
 
     return {
         optionsConfig,

@@ -1,20 +1,20 @@
 import COLLECTIONS from '$lib/constants/collections';
 import MESSAGES from '$lib/constants/messages';
 import { authorize } from '$lib/middlewares/auth';
-import UserSchema from '$lib/schemas/users';
+import RoleSchema from '$lib/schemas/roles';
 import { findByIdAndRemove, findById, findByIdAndUpdate } from '$lib/services/mongo';
 import exceptionHandler from '$lib/utils/exceptions';
 import { json, type RequestEvent, type RequestHandler } from '@sveltejs/kit';
 
 
-const COLLECTION = COLLECTIONS.USERS;
+const COLLECTION = COLLECTIONS.OPTIONS;
 
 export const GET: RequestHandler = authorize(async ({ params }: RequestEvent) =>
 {
     try
     {
         const { id } = params;
-        const res = await findById(COLLECTION, id as string, { projection: { password: 0 } });
+        const res = await findById(COLLECTION, id as string);
         if (!res)
         {
             return json({ message: MESSAGES.NOT_FOUND }, { status: 404 });
@@ -26,17 +26,16 @@ export const GET: RequestHandler = authorize(async ({ params }: RequestEvent) =>
     }
 });
 
-export const PATCH: RequestHandler = async ({ request, params }: RequestEvent) =>
+export const PATCH: RequestHandler = authorize(async ({ request, params, locals }: RequestEvent) =>
 {
     try
     {
         const { id } = params;
         const body = await request.json();
-        const validated = UserSchema.parse(body);
+        const validated = RoleSchema.parse(body);
         const res = await findByIdAndUpdate(COLLECTION, id as string, validated, {
-            returnDocument: 'after',
-            projection: { password: 0 }
-        });
+            returnDocument: 'after'
+        }, locals.user._id.toString());
         if (!res)
         {
             return json({ message: MESSAGES.NOT_FOUND }, { status: 404 });
@@ -46,14 +45,14 @@ export const PATCH: RequestHandler = async ({ request, params }: RequestEvent) =
     {
         return exceptionHandler(error);
     }
-};
+});
 
-export const DELETE: RequestHandler = async ({ params }: RequestEvent) =>
+export const DELETE: RequestHandler = authorize(async ({ params }: RequestEvent) =>
 {
     try
     {
         const { id } = params;
-        const res = await findByIdAndRemove(COLLECTION, id as string, { projection: { password: 0 } });
+        const res = await findByIdAndRemove(COLLECTION, id as string);
         if (!res)
         {
             return json({ message: MESSAGES.NOT_FOUND }, { status: 404 });
@@ -63,4 +62,4 @@ export const DELETE: RequestHandler = async ({ params }: RequestEvent) =>
     {
         return exceptionHandler(error);
     }
-};
+});

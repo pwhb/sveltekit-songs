@@ -1,6 +1,7 @@
 import { MONGODB_DATABASE } from '$env/static/private';
 import COLLECTIONS from '$lib/constants/collections';
 import MESSAGES from '$lib/constants/messages';
+import { authorize } from '$lib/middlewares/auth';
 import { countDocuments, findMany } from '$lib/services/mongo';
 import clientPromise from '$lib/services/mongodb';
 import exceptionHandler from '$lib/utils/exceptions';
@@ -9,7 +10,7 @@ import { json, type RequestEvent, type RequestHandler } from '@sveltejs/kit';
 
 const COLLECTION = COLLECTIONS.USERS;
 
-export const GET: RequestHandler = async ({ url }: RequestEvent) =>
+export const GET: RequestHandler = authorize(async ({ url }: RequestEvent) =>
 {
     try
     {
@@ -56,7 +57,7 @@ export const GET: RequestHandler = async ({ url }: RequestEvent) =>
     {
         return exceptionHandler(error);
     }
-};
+});
 
 // export const POST: RequestHandler = async ({ request, locals }: RequestEvent) =>
 // {

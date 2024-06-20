@@ -7,7 +7,8 @@ const COLLECTIONS = {
     COLLECTION: "collections",
     SONGS: "songs",
     UPLOADS: "uploads",
-    PERMISSIONS: "permissions"
+    PERMISSIONS: "permissions",
+    ROLES: "roles"
 };
 
 export default COLLECTIONS;
