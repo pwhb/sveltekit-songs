@@ -10,7 +10,7 @@ import { json, type RequestEvent, type RequestHandler } from '@sveltejs/kit';
 
 const COLLECTION = COLLECTIONS.COLLECTION;
 
-export const GET: RequestHandler = async ({ url }: RequestEvent) =>
+export const GET: RequestHandler = authorize(async ({ url }: RequestEvent) =>
 {
     try
     {
@@ -39,7 +39,7 @@ export const GET: RequestHandler = async ({ url }: RequestEvent) =>
     {
         return exceptionHandler(error);
     }
-};
+});
 
 export const POST: RequestHandler = authorize(async ({ request, locals }: RequestEvent) =>
 {

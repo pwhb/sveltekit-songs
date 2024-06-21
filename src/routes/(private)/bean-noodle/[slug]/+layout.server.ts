@@ -25,7 +25,7 @@ export const load: LayoutServerLoad = async ({ params, fetch }) =>
             const url = slug === "custom" ? `${API_PATH}/options?name=${key}&size=100` : `${API_PATH}/${slug}?size=100`;
             const optionsRes = await fetch(url);
             const optionsData = await optionsRes.json();
-            const options = [emptyOption, ...optionsData.data.map((doc: any) => ({ label: doc[slug === "custom" ? "value" : key], value: doc._id, }))];
+            const options = [emptyOption, ...optionsData.data.map((doc: any) => ({ label: doc[slug === "custom" ? "value" : key], value: slug === "custom" ? doc.value : doc._id, }))];
             optionsConfig[col.value] = options;
             console.log({
                 slug,
@@ -37,7 +37,7 @@ export const load: LayoutServerLoad = async ({ params, fetch }) =>
         }
     }
 
-    console.log({ optionsConfig });
+    console.log("optionsConfig", JSON.stringify(optionsConfig, null, 2));
 
 
     return {

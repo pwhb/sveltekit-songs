@@ -1,9 +1,11 @@
 import COLLECTIONS from "$lib/constants/collections";
 import { UserStatus } from "$lib/constants/common";
 import MESSAGES from "$lib/constants/messages";
-import { findById, findOne } from "$lib/services/mongo";
+import { aggregate, findById, findMany, findOne } from "$lib/services/mongo";
 import { verifyToken } from "$lib/utils/auth";
 import { json, type RequestEvent, type RequestHandler } from "@sveltejs/kit";
+import { ObjectId, type Document, type Filter, type FindOneAndDeleteOptions, type FindOneAndUpdateOptions, type FindOptions } from "mongodb";
+
 
 
 export function authenticate(handler: RequestHandler)
@@ -20,7 +22,7 @@ export function authenticate(handler: RequestHandler)
                 const header = event.request.headers.get("Authorization");
                 if (!header) return unauthenticatedResponse;
                 const [bearer, tokenFromHeader] = header.split(" ");
-                if (bearer !== "Bearer" || !token) return unauthenticatedResponse;
+                if (bearer !== "Bearer" || !tokenFromHeader) return unauthenticatedResponse;
                 token = tokenFromHeader;
             }
 
@@ -28,15 +30,25 @@ export function authenticate(handler: RequestHandler)
 
             if (!decoded) return unauthenticatedResponse;
 
-            const user = await findById(COLLECTIONS.USERS, decoded._id, {
-                projection: {
-                    password: 0,
-                    history: 0
+            const users = await aggregate(COLLECTIONS.USERS, [
+                {
+                    $match: {
+                        _id: new ObjectId(decoded._id as string),
+                    }
+                },
+                {
+                    $project: {
+                        password: 0,
+                        history: 0
+                    }
+                },
+                {
+                    $limit: 1
                 }
-            });
-            if (!user || !user.active) return unauthenticatedResponse;
-
-            event.locals.user = user;
+            ]);
+            if (!users || !users[0] || !users[0].active) return unauthenticatedResponse;
+            
+            event.locals.user = users[0]
 
             return handler(event);
         } catch (error: any)
@@ -66,9 +78,12 @@ export function authorize(handler: RequestHandler, allowed: [string] = ["root"])
                 pathname = pathname.replace(params.id, ":id");
             }
 
-            const permission = await findOne(COLLECTIONS.PERMISSIONS, { method, pattern: pathname });
-            console.log(event.locals.user);
-            
+            const permissions = await findMany(COLLECTIONS.PERMISSIONS, { method, pattern: pathname });
+            console.log({
+                user: event.locals.user,
+                permissions
+            });
+
 
             return handler(event);
         } catch (error)

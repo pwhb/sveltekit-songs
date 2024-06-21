@@ -27,15 +27,11 @@ export const GET: RequestHandler = async ({ url }: RequestEvent) =>
                 type: QueryType.Regex,
             },
             {
-                key: 'url',
+                key: 'pattern',
                 type: QueryType.Regex,
             },
             {
-                key: 'parentId',
-                type: QueryType.String,
-            },
-            {
-                key: 'collectionId',
+                key: 'menuId',
                 type: QueryType.String,
             },
             {
@@ -49,18 +45,11 @@ export const GET: RequestHandler = async ({ url }: RequestEvent) =>
                 $match: filter
             },
             ...getLookupPipeline({
-                key: 'parentId',
+                key: 'menuId',
                 from: COLLECTIONS.MENUS,
                 foreignField: '_id',
                 foreignKey: 'name',
-                as: 'parent'
-            }),
-            ...getLookupPipeline({
-                key: 'collectionId',
-                from: COLLECTIONS.COLLECTION,
-                foreignField: '_id',
-                foreignKey: 'name',
-                as: 'collection'
+                as: 'menu'
             }),
             ...getLookupPipeline({
                 key: 'history.created.by',
@@ -78,7 +67,7 @@ export const GET: RequestHandler = async ({ url }: RequestEvent) =>
             {
                 $limit: limit
             }
-        ];
+        ];        
         if (Object.keys(projection).length)
         {
             pipeline.push({ $project: projection });

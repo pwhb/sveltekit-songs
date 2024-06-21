@@ -27,6 +27,31 @@ export async function insertOne(collection: string, doc: any, by?: any)
 
 }
 
+export async function insertMany(collection: string, docs: any[], by?: any)
+{
+    try
+    {
+        const client = await clientPromise;
+        const col = client.db(MONGODB_DATABASE).collection(collection);
+        return await col.insertMany(docs.map(doc => ({
+            ...doc,
+            "history": {
+                created:
+                {
+                    at: new Date(),
+                    by: by || null
+                }
+            }
+        })));
+    }
+    catch (error)
+    {
+        console.error(error);
+        return null;
+    }
+
+}
+
 export async function updateOne(collection: string, filter: Filter<any>, doc: any, options: FindOneAndUpdateOptions & {
     includeResultMetadata?: true;
 } = { returnDocument: "after" }, by?: any)
