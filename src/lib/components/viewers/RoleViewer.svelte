@@ -15,10 +15,10 @@
 
 	const { tableConfig, details: detailsRes, slug, selectConfig } = $page.data;
 
-	const details = detailsRes.data;
+	const details = detailsRes?.data;
 
 	const payload = {
-		...detailsRes.data
+		...detailsRes?.data
 	};
 
 	let menuTree: any = selectConfig.menuTree;

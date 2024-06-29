@@ -2,11 +2,12 @@ import { MONGODB_DATABASE } from '$env/static/private';
 import COLLECTIONS from '$lib/constants/collections';
 import MESSAGES from '$lib/constants/messages';
 import { authorize } from '$lib/middlewares/auth';
-import { countDocuments, findMany } from '$lib/services/mongo';
+import { aggregate, countDocuments, findMany, getLookupPipeline } from '$lib/services/mongo';
 import clientPromise from '$lib/services/mongodb';
 import exceptionHandler from '$lib/utils/exceptions';
 import { getOptions, QueryType } from '$lib/utils/query';
 import { json, type RequestEvent, type RequestHandler } from '@sveltejs/kit';
+import type { Document } from 'mongodb';
 
 const COLLECTION = COLLECTIONS.USERS;
 
@@ -48,9 +49,41 @@ export const GET: RequestHandler = authorize(async ({ url }: RequestEvent) =>
             },
         ]);
 
-        projection.password = 0;
-
-        const data = await findMany(COLLECTION, filter, { skip, limit, sort, projection });
+        const pipeline: Document[] = [
+            {
+                $match: filter
+            },
+            ...getLookupPipeline({
+                key: 'roleId',
+                from: COLLECTIONS.ROLES,
+                foreignField: '_id',
+                foreignKey: 'name',
+                as: 'role'
+            }),
+            ...getLookupPipeline({
+                key: 'history.created.by',
+                from: COLLECTIONS.USERS,
+                foreignField: '_id',
+                foreignKey: 'username',
+                as: 'history.created.by'
+            }),
+            {
+                $sort: sort
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            },
+            {
+                $project: {
+                    ...projection,
+                    password: 0
+                }
+            }
+        ];
+        const data = await aggregate(COLLECTION, pipeline);
         const count = await countDocuments(COLLECTION, filter);
         return json({ message: MESSAGES.SUCCESS, page, size: limit, count, data }, { status: 200 });
     } catch (error)

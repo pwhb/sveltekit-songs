@@ -36,23 +36,24 @@ export function joinMenusAndPermissions(menus: any[], permissions: any[])
 
     permissions.forEach((permission: any) =>
     {
-        if (!permissionsMap[permission.collection])
+        if (!permissionsMap[permission.menuId])
         {
-            permissionsMap[permission.collection] = [];
+            permissionsMap[permission.menuId] = [];
         }
-        permissionsMap[permission.collection].push(permission);
+        permissionsMap[permission.menuId].push(permission);
     });
 
     menus.forEach(menu =>
     {
-        if (permissionsMap[menu.collection])
+        if (permissionsMap[menu._id])
         {
-            menu.permissions = permissionsMap[menu.collection];
+            menu.permissions = permissionsMap[menu._id];
         } else
         {
             menu.permissions = [];
         }
     });
+
 
     return menus;
 }

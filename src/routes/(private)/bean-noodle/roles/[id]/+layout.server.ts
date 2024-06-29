@@ -1,3 +1,4 @@
+import { API_PATH } from '$lib/constants/constants';
 import { joinMenusAndPermissions, makeTree } from '$lib/utils/structures';
 import type { LayoutServerLoad } from './$types';
 
@@ -15,7 +16,7 @@ export const load: LayoutServerLoad = async ({ locals, fetch, params }) =>
     const menusRes = await fetch(`${API_PATH}/menus?active=true&size=100&select=_id,name,children,parentId,collection`);
     const menusData = await menusRes.json();
 
-    const permissionsRes = await fetch(`${API_PATH}/permissions?active=true&size=100&select=_id,collection,action`);
+    const permissionsRes = await fetch(`${API_PATH}/permissions?active=true&size=100&select=_id,menu,menuId,action`);
     const permissionsData = await permissionsRes.json();
 
     const menus = menusData.data.map((val: any) => ({ ...val, selected: data.data.menus ? data.data.menus.includes(val._id) : false }));

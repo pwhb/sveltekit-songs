@@ -92,7 +92,9 @@ export function authorize(handler: RequestHandler, allowed: [string] = ["root"])
             if (!actions?.length)
             {
                 console.error("Unauthorized", {
-                    method, pattern: pathname
+                    permissions: permissions?.map(v => v._id),
+                    method, 
+                    pattern: pathname
                 });
 
                 return unauthorizedResponse;
