@@ -9,6 +9,8 @@
 	import { extractSelectedIds } from '$lib/utils/structures';
 	import RecursiveRadioList from '../common/RecursiveRadioList.svelte';
 	import DefaultDialog from '../dialog/DefaultDialog.svelte';
+	import { API_PATH } from '$lib/constants/constants';
+	import MESSAGES from '$lib/constants/messages';
 	export let mode: DocumentMode;
 
 	const { tableConfig, details: detailsRes, slug, selectConfig } = $page.data;

@@ -7,7 +7,7 @@ import exceptionHandler from '$lib/utils/exceptions';
 import { json, type RequestEvent, type RequestHandler } from '@sveltejs/kit';
 
 
-const COLLECTION = COLLECTIONS.OPTIONS;
+const COLLECTION = COLLECTIONS.ROLES;
 
 export const GET: RequestHandler = authorize(async ({ params }: RequestEvent) =>
 {

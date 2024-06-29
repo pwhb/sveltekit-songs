@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	export let col: any;
-	export let colTypes: any;
 	export let payload: any;
 	export let idx: number;
 </script>
@@ -14,7 +13,7 @@
 </td>
 <td>
 	<select bind:value={col.type}>
-		{#each colTypes as type}
+		{#each $page.data.colTypes as type}
 			<option value={type.value}>{type.label}</option>
 		{/each}
 	</select>

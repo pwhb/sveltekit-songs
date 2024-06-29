@@ -8,6 +8,7 @@ declare global
 		interface Locals
 		{
 			user?: any;
+			actions?: string[]
 		}
 		// interface PageData {}
 		// interface PageState {}

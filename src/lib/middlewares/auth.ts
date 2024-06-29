@@ -1,7 +1,7 @@
 import COLLECTIONS from "$lib/constants/collections";
 import { UserStatus } from "$lib/constants/common";
 import MESSAGES from "$lib/constants/messages";
-import { aggregate, findById, findMany, findOne } from "$lib/services/mongo";
+import { aggregate, findById, findMany, findOne, getLookupPipeline } from "$lib/services/mongo";
 import { verifyToken } from "$lib/utils/auth";
 import { json, type RequestEvent, type RequestHandler } from "@sveltejs/kit";
 import { ObjectId, type Document, type Filter, type FindOneAndDeleteOptions, type FindOneAndUpdateOptions, type FindOptions } from "mongodb";
@@ -36,6 +36,12 @@ export function authenticate(handler: RequestHandler)
                         _id: new ObjectId(decoded._id as string),
                     }
                 },
+                ...getLookupPipeline({
+                    key: 'roleId',
+                    from: COLLECTIONS.ROLES,
+                    foreignField: '_id',
+                    as: 'role'
+                }),
                 {
                     $project: {
                         password: 0,
@@ -47,8 +53,8 @@ export function authenticate(handler: RequestHandler)
                 }
             ]);
             if (!users || !users[0] || !users[0].active) return unauthenticatedResponse;
-            
-            event.locals.user = users[0]
+
+            event.locals.user = users[0];
 
             return handler(event);
         } catch (error: any)
@@ -68,7 +74,7 @@ export function authorize(handler: RequestHandler, allowed: [string] = ["root"])
         {
             const unauthorizedResponse = json({ message: MESSAGES.UNAUTHORIZED }, { status: 401 });
 
-            if (!event.locals.user) return unauthorizedResponse;
+            if (!event.locals.user || !event.locals.user.role) return unauthorizedResponse;
 
             const { request, params } = event;
             const { method, url } = request;
@@ -79,10 +85,20 @@ export function authorize(handler: RequestHandler, allowed: [string] = ["root"])
             }
 
             const permissions = await findMany(COLLECTIONS.PERMISSIONS, { method, pattern: pathname });
-            console.log({
-                user: event.locals.user,
-                permissions
-            });
+
+
+            const actions = permissions?.filter(perm => event.locals.user.role.permissions.includes(perm._id.toString())).map(v => v.action);
+
+            if (!actions?.length)
+            {
+                console.error("Unauthorized", {
+                    method, pattern: pathname
+                });
+
+                return unauthorizedResponse;
+            };
+
+            event.locals.actions = actions;
 
 
             return handler(event);

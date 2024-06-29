@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import DraggableList from '../common/DraggableList.svelte';
 	export let payload: any;
-	const { colTypes } = $page.data;
 </script>
 
 <tr>
@@ -18,7 +16,7 @@
 				<th>slug:key</th>
 			</tr>
 
-			<DraggableList {payload} {colTypes} />
+			<DraggableList {payload} />
 		</table>
 	</td>
 </tr>

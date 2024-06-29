@@ -3,9 +3,10 @@
 
 	import { flip } from 'svelte/animate';
 	import DraggableListItem from './DraggableListItem.svelte';
+	import { page } from '$app/stores';
 
 	export let payload;
-	export let colTypes;
+	
 
 	let hovering = false;
 
@@ -44,7 +45,7 @@
 		on:dragenter={() => (hovering = idx)}
 		class:is-active={hovering === idx}
 	>
-		<DraggableListItem {col} {colTypes} bind:payload {idx} />
+		<DraggableListItem {col} bind:payload {idx} />
 	</tr>
 {/each}
 

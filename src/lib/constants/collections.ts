@@ -1,13 +1,13 @@
 const COLLECTIONS = {
     USERS: "users",
-    OPTIONS: "options",
+    OPTIONS: "options", // permission created
     FORMS: "forms",
     CONFIGS: "configs",
-    MENUS: "menus",
-    COLLECTION: "collections",
+    MENUS: "menus", // permission created
+    COLLECTION: "collections", // permission created
     SONGS: "songs",
     UPLOADS: "uploads",
-    PERMISSIONS: "permissions",
+    PERMISSIONS: "permissions", // permission created
     ROLES: "roles"
 };
 

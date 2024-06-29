@@ -19,13 +19,13 @@
 				<td></td>
 			{:else if column.type === 'boolean'}
 				<td>
-					<input type="checkbox" class="toggle" bind:checked={searchQuery[column.label]} />
+					<input type="checkbox" class="toggle" bind:checked={searchQuery[column.value]} />
 				</td>
 			{:else if column.type === 'select'}
 				<td>
 					<select
 						class="w-20 select-xs select select-bordered"
-						bind:value={searchQuery[column.label]}
+						bind:value={searchQuery[column.value]}
 					>
 						{#each optionsConfig[column.value] as select}
 							<option value={select.value}>{select.label}</option>
@@ -37,7 +37,7 @@
 					<input
 						type="text"
 						class="w-20 input input-xs input-bordered"
-						bind:value={searchQuery[column.label]}
+						bind:value={searchQuery[column.value]}
 					/>
 				</td>
 			{/if}

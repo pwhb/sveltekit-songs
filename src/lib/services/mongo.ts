@@ -204,15 +204,16 @@ export async function aggregate(collection: string, pipeline: Document[] = [])
 }
 
 
-export function getLookupPipeline({ key, from, foreignField, foreignKey, as }: {
+export function getLookupPipeline({ key, from, foreignField, foreignKey, as, asArray = false }: {
     key: string;
     from: string;
     foreignField?: string;
     foreignKey?: string;
     as: string;
+    asArray?: boolean;
 })
 {
-    return [
+    const pipeline: Document[] = [
         {
             $addFields: {
                 [key]: { $toObjectId: `$${key}` }
@@ -226,10 +227,17 @@ export function getLookupPipeline({ key, from, foreignField, foreignKey, as }: {
                 as: as
             }
         },
-        {
-            $addFields: {
-                [as]: { $arrayElemAt: [`$${as}.${foreignKey || 'name'}`, 0] }
-            }
-        },
     ];
+
+    if (!asArray)
+    {
+        pipeline.push({
+            $addFields: {
+                [as]: { $arrayElemAt: [foreignKey ? `$${as}.${foreignKey}` : `$${as}`, 0] }
+            }
+        });
+    }
+
+    return pipeline;
+
 }

@@ -12,8 +12,6 @@ export const load: LayoutServerLoad = async ({ params, fetch }) =>
 
     const optionsConfig: any = {};
 
-    console.log({ selectCols });
-
     if (selectCols.length)
     {
         for (const col of selectCols)
@@ -27,19 +25,8 @@ export const load: LayoutServerLoad = async ({ params, fetch }) =>
             const optionsData = await optionsRes.json();
             const options = [emptyOption, ...optionsData.data.map((doc: any) => ({ label: doc[slug === "custom" ? "value" : key], value: slug === "custom" ? doc.value : doc._id, }))];
             optionsConfig[col.value] = options;
-            console.log({
-                slug,
-                key,
-                url,
-                options
-            });
-
         }
     }
-
-    console.log("optionsConfig", JSON.stringify(optionsConfig, null, 2));
-
-
     return {
         optionsConfig,
         tableConfig: colData.data[0],
