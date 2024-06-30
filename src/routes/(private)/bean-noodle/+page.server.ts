@@ -8,7 +8,8 @@ export const load: PageServerLoad = async ({ locals, fetch }) =>
 {
 	const menusRes = await fetch(`${API_PATH}/menus?active=true&size=100&select=_id,name,children,parentId,icon,url`);
 	const menusData = await menusRes.json();
+	const menus = menusData.data.filter((v: any) => locals.user.role.menus.includes(v._id));
 	return {
-		menus: makeTree(menusData.data, 'children', 'parentId')
+		menus: makeTree(menus, 'children', 'parentId')
 	};
 };

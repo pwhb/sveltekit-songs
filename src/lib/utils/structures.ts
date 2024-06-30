@@ -111,3 +111,8 @@ export function extractSelectedIds(menuItems: any[])
 
     return { menus, permissions };
 }
+
+export function isAllowed(actions: string[], permissions: any[])
+{
+    return actions.some(action => permissions.map(v => v.action).includes(action));
+}

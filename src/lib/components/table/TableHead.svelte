@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { ButtonType } from '$lib/constants/common';
 	import { getUrlFromQuery } from '$lib/utils/common';
+	import { isAllowed } from '$lib/utils/structures';
 	const query = Object.fromEntries($page.url.searchParams);
 	const { tableConfig } = $page.data;
 </script>
@@ -35,7 +37,9 @@
 			{/if}
 		{/each}
 		<th>
-			<a class="text-white btn btn-xs btn-info" href={`${$page.url.pathname}/create`}>create</a>
+			{#if isAllowed([ButtonType.CREATE], $page.data.myPermissions)}
+				<a class="text-white btn btn-xs btn-info" href={`${$page.url.pathname}/create`}>create</a>
+			{/if}
 		</th>
 	</tr>
 </thead>

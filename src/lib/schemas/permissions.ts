@@ -3,6 +3,7 @@ import { z } from "zod";
 const PermissionSchema = z.object({
     menuId: z.string(),
     action: z.string(),
+    // slug: z.string().optional(),
     method: z.string(),
     pattern: z.string(),
     active: z.boolean().default(false)

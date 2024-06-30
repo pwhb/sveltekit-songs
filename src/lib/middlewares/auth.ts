@@ -96,7 +96,7 @@ export function authorize(handler: RequestHandler, allowed: [string] = ["root"])
                     method, 
                     pattern: pathname
                 });
-
+                
                 return unauthorizedResponse;
             };
 

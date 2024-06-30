@@ -14,7 +14,10 @@ export const POST: RequestHandler = authorize(async ({ request, locals }: Reques
     {
         const body = await request.json();
         const validated = PermissionBulkCreateSchema.parse(body);
-        const res = await insertMany(COLLECTION, validated.permissions, locals.user._id.toString());
+        const res = await insertMany(COLLECTION, validated.permissions.map(v => ({
+            ...v,
+            slug: v.pattern.split("/")[3]
+        })), locals.user._id.toString());
         return json({ message: MESSAGES.SUCCESS, data: res }, { status: 200 });
     } catch (error)
     {

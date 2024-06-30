@@ -2,14 +2,16 @@ import type { LayoutServerLoad } from './$types';
 import { emptyOption } from '$lib/constants/common';
 import { API_PATH } from '$lib/constants/constants';
 
-export const load: LayoutServerLoad = async ({ params, fetch }) =>
+export const load: LayoutServerLoad = async ({ params, fetch, locals }) =>
 {
     const { slug } = params;
     const colRes = await fetch(`${API_PATH}/collections?name=${slug}`);
     const colData = await colRes.json();
 
-    const selectCols = colData.data[0].columns.filter((col: any) => col.type === "select");
+    const permRes = await fetch(`${API_PATH}/permissions/me?slug=${slug}&select=action,pattern,slug`);
+    const permData = await permRes.json();
 
+    const selectCols = colData.data[0].columns.filter((col: any) => col.type === "select");
     const optionsConfig: any = {};
 
     if (selectCols.length)
@@ -30,5 +32,6 @@ export const load: LayoutServerLoad = async ({ params, fetch }) =>
     return {
         optionsConfig,
         tableConfig: colData.data[0],
+        myPermissions: permData.data
     };
 };

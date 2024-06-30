@@ -4,6 +4,18 @@ export enum UserStatus
     INACTIVE = "inactive",
 }
 
+export enum ButtonType
+{
+    CREATE = "create",
+    VIEW = "view",
+    VIEW_OWN = "view-own",
+    EDIT = "edit",
+    EDIT_OWN = "edit-own",
+    EDIT_AS_EDITOR = "	edit-as-editor",
+    DELETE = "delete",
+    DELETE_OWN = "delete-own"
+}
+
 export enum FormType
 {
     TEXT = "text",

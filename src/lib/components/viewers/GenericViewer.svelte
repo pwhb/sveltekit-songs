@@ -1,26 +1,30 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { openModal } from '$lib/utils/dialog';
-	import { DocumentMode } from '$lib/constants/common';
+	import { ButtonType, DocumentMode } from '$lib/constants/common';
 	import { parseDate } from '$lib/utils/formatters';
 	import DefaultDialog from '../dialog/DefaultDialog.svelte';
 	import { isLoading } from '$lib/stores/viewer';
+	import { isAllowed } from '$lib/utils/structures';
 
 	export let mode: DocumentMode;
 	export let handleSubmit: () => void;
 	export let handleDelete: () => void;
+	export let buttons = [ButtonType.CREATE, ButtonType.VIEW, ButtonType.EDIT, ButtonType.DELETE];
 	export let payload: any;
 
 	const { tableConfig, details: detailsRes, slug, optionsConfig } = $page.data;
 </script>
 
-<DefaultDialog
-	modalId="delete_item"
-	title="Are you sure?"
-	text={`Are you sure you want to delete ${detailsRes?.data._id}?`}
-	onSubmit={handleDelete}
-	disabled={$isLoading}
-/>
+{#if handleDelete}
+	<DefaultDialog
+		modalId="delete_item"
+		title="Are you sure?"
+		text={`Are you sure you want to delete ${detailsRes?.data._id}?`}
+		onSubmit={handleDelete}
+		disabled={$isLoading}
+	/>
+{/if}
 
 <div class="overflow-x-auto mx-auto max-w-md">
 	<form on:submit={handleSubmit}>
@@ -77,22 +81,24 @@
 			</tbody>
 		</table>
 		<div class="flex gap-10 justify-center m-10">
-			{#if mode === DocumentMode.Create}
+			{#if mode === DocumentMode.Create && isAllowed([ButtonType.CREATE], $page.data.myPermissions)}
 				<button class="text-white btn btn-sm btn-success" type="submit" disabled={$isLoading}
 					>create</button
 				>
-			{:else if mode === DocumentMode.Edit}
+			{:else if mode === DocumentMode.Edit && isAllowed([ButtonType.EDIT, ButtonType.EDIT_OWN, ButtonType.EDIT_AS_EDITOR], $page.data.myPermissions)}
 				<button class="text-white btn btn-sm btn-info" type="submit" disabled={$isLoading}
 					>save</button
 				>
-				<button
-					class="text-white btn btn-sm btn-error"
-					type="button"
-					on:click={() => {
-						openModal('delete_item');
-					}}>delete</button
-				>
-			{:else}
+				{#if buttons.includes(ButtonType.DELETE) && isAllowed([ButtonType.DELETE, ButtonType.DELETE_OWN], $page.data.myPermissions)}
+					<button
+						class="text-white btn btn-sm btn-error"
+						type="button"
+						on:click={() => {
+							openModal('delete_item');
+						}}>delete</button
+					>
+				{/if}
+			{:else if buttons.includes(ButtonType.EDIT) && isAllowed([ButtonType.EDIT, ButtonType.EDIT_OWN, ButtonType.EDIT_AS_EDITOR], $page.data.myPermissions)}
 				<a
 					class="text-white btn btn-sm btn-primary"
 					href={`/bean-noodle/${slug}/${detailsRes?.data._id}/edit`}>edit</a

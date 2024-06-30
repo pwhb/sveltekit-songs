@@ -33,7 +33,7 @@
 										class="radio"
 										bind:checked={permission.selected}
 									/>
-									<span>{permission.menu}/{permission.action}</span>
+									<span>{permission.pattern} ({permission.action})</span>
 								</div>
 							{/each}
 						</div>

@@ -27,6 +27,10 @@ export const GET: RequestHandler = authorize(async ({ url }: RequestEvent) =>
                 type: QueryType.Regex,
             },
             {
+                key: 'slug',
+                type: QueryType.String,
+            },
+            {
                 key: 'pattern',
                 type: QueryType.Regex,
             },
@@ -67,7 +71,7 @@ export const GET: RequestHandler = authorize(async ({ url }: RequestEvent) =>
             {
                 $limit: limit
             }
-        ];        
+        ];
         if (Object.keys(projection).length)
         {
             pipeline.push({ $project: projection });
@@ -88,8 +92,10 @@ export const POST: RequestHandler = authorize(async ({ request, locals }: Reques
 
         const body = await request.json();
         const validated = PermissionSchema.parse(body);
-
-        const res = await insertOne(COLLECTION, validated, locals.user._id.toString());
+        const res = await insertOne(COLLECTION, {
+            ...validated,
+            slug: validated.pattern.split("/")[3]
+        }, locals.user._id.toString());
         return json({ message: MESSAGES.SUCCESS, data: res }, { status: 200 });
     } catch (error)
     {

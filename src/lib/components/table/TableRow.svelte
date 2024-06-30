@@ -2,9 +2,11 @@
 	import { page } from '$app/stores';
 	import { PUBLIC_BASE_URL } from '$env/static/public';
 	import COLLECTIONS from '$lib/constants/collections';
+	import { ButtonType } from '$lib/constants/common';
 	import { API_PATH } from '$lib/constants/constants';
 	import { copyToClipboard, parseKey } from '$lib/utils/common';
 	import { parseDate } from '$lib/utils/formatters';
+	import { isAllowed } from '$lib/utils/structures';
 	import PreviewTableData from './PreviewTableData.svelte';
 
 	export let row: any;
@@ -59,9 +61,11 @@
 					);
 				}}>copy</button
 			>
-		{:else}
+		{:else if isAllowed([ButtonType.EDIT, ButtonType.EDIT_OWN, ButtonType.EDIT_AS_EDITOR], $page.data.myPermissions)}
 			<a class="btn btn-xs btn-primary" href={`/bean-noodle/${slug}/${row._id}/edit`}>edit</a>
 		{/if}
-		<button class="text-white btn btn-xs btn-error" on:click={onDelete}>delete</button>
+		{#if isAllowed([ButtonType.DELETE, ButtonType.DELETE_OWN], $page.data.myPermissions)}
+			<button class="text-white btn btn-xs btn-error" on:click={onDelete}>delete</button>
+		{/if}
 	</td>
 </tr>

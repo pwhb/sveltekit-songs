@@ -19,7 +19,7 @@ export const POST: RequestHandler = async ({ request }) =>
             const res = await insertOne(COLLECTIONS.USERS, {
                 username: validated.username,
                 password: hashSync(validated.password),
-                status: UserStatus.INACTIVE
+                active: false
             });
             if (res)
             {
